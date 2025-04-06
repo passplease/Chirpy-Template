@@ -1,0 +1,123 @@
+name: "Deploy Website"
+description: "Checkout, Build and Deploy My Website"
+inputs:
+  base_path:
+    description: "steps.pages.outputs.base_path"
+    required: true
+  repository:
+    description: "Repository which Needed to Deploy (Include '/' )"
+    required: false
+    default: ""
+  user_name:
+    description: "User Name"
+    required: false
+    default: "passplease"
+  send_email:
+    description: "Enable email notification"
+    required: false
+    default: "false"
+  ruby_version:
+    description: "Ruby version to use"
+    required: false
+    default: "3.3"
+  email_username:
+    required: false
+    default: ""
+  email_password:
+    required: false
+    default: ""
+  email_recipient:
+    required: false
+    default: ""
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Template
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.user_name }}/Chirpy-Template
+        fetch-depth: 0
+        # submodules: true
+        # If using the 'assets' git submodule from Chirpy Starter, uncomment above
+        # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
+        path: ${{ github.workspace }}
+
+    - name: Checkout Post
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.user_name }}${{ inputs.repository }}
+        sparse-checkout: Chirpy
+        path: ${{ github.workspace }
+        fetch-depth: 0
+
+#    - name: Flatten to root
+#      run: |
+#        rsync -a _temp/ ./  # 将内容移动到根目录
+#        rm -rf _temp        # 删除临时目录
+
+    - name: Setup Pages
+      id: pages
+      uses: actions/configure-pages@v4
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby_version }}
+        bundler-cache: true
+
+    - name: Install Dependencies
+      run: |
+        gem install bundler
+        bundle install
+
+    - name: npm build
+      run: npm install && npm run build
+
+    - name: Build site
+      run: bundle exec jekyll b -d "_site${{ inputs.base_path }}"
+      env:
+        JEKYLL_ENV: "production"
+
+    - name: Upload site artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: "jekyll-theme-chirpy-master/_site${{ inputs.base_path }}"
+
+  deploy:
+    environment:
+      name: github-pages
+      url: "https://github.${{ inputs.user_name }}.io${{ inputs.repository }}"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Send mail
+        if: ${{ inputs.send_email == 'true' }}
+        uses: dawidd6/action-send-mail@v4
+        with:
+    # Required mail server address if not connection_url:
+          server_address: smtp.gmail.com
+    # Server port, default 25:
+          server_port: 465
+    # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+    # Optional (recommended) mail server username:
+          username: ${{ inputs.email_username }}
+    # Optional (recommended) mail server password:
+          password: ${{ inputs.email_password }}
+    # Required mail subject:
+          subject: 新博客上传啦
+    # Required recipients' addresses:
+          bcc: ${{ inputs.email_recipient }}
+    # Required sender full name (address can be skipped):
+          from: Luke Skywalker # <user@example.com>
+    # Optional plain body:
+          body: 网站博客更新新内容啦，邀你来看哦，网址："https://github.${{ inputs.user_name }}.io${{ inputs.repository }}"
