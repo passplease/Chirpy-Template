@@ -1,0 +1,10 @@
+@forward 'buttons';
+@forward 'popups';
+
+.content > ul{
+    & > li{
+        font-size: 1.4rem;    // 字体大小
+        line-height: 1.6;    // 行高
+        margin-bottom: 0.5rem; // 下外边距
+    }
+}
