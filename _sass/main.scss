@@ -2,71 +2,56 @@
 @forward 'components';
 @forward 'layout';
 @forward 'pages';
-
-@font-face {
-    font-family: 'JetBrains'; /* 定义字体的名称，你可以在 CSS 中使用这个名称来引用该字体 */
-    src: url('../assets/fonts/JetBrainsMono-Italic.woff2') format('woff2'), /* 字体文件的路径和格式 */
-         url('../assets/fonts/JetBrainsMono-Italic.woff') format('woff'),
-         url('../assets/fonts/JetBrainsMono-Italic.ttf') format('truetype'); /* 可以提供多种格式的字体文件，浏览器会选择它支持的格式 */
-    font-weight: normal; /* 字体的粗细 */
-    font-style: normal; /* 字体的样式 */
-    font-display: swap; /* 字体加载策略 */
-  }
+@forward "fonts";
 
 body{
-    font-family: "STXingkai", "Xingkai SC", serif; /* 华文行楷，备选字体 Xingkai SC */
-    font-size: medium;
+  font-family: 'WebsiteFont', serif; /* 华文行楷，备选字体 Xingkai SC */
+  font-size: medium;
 }
 .page-title{
-    font-family: "KaiTi", "SimKai", serif;
-    font-size: larger;
+  font-family: "KaiTi", "SimKai", serif;
+  font-size: larger;
 }
 h1 {
-    font-size: 3rem;
-    color: rgb(15, 125, 216);
-    font-family: "STXingkai", "Xingkai SC", serif;
+  font-size: 3rem;
+  color: rgb(15, 125, 216);
+  font-family: 'WebsiteFont', serif;
 }
 h2, h3, h4, h5, h6 {
-    color: aqua;
-    font-family: "KaiTi", "SimKai", serif;
+  color: aqua;
+  font-family: "KaiTi", "SimKai", serif;
 }
 p{
-    font-size: 1.45rem;
+  font-size: 1.45rem;
 }
 .post-list, .post-title, .post-meta{
-    font-size: 2.4rem; /* 调整文章标题字体大小 */
+  font-size: 2.4rem; /* 调整文章标题字体大小 */
 }
 .other_text{
-    font-family: "KaiTi", "SimKai", serif;
+  font-family: 'WebsiteFont',"KaiTi", "SimKai", serif;
 }
 .lang_russian{
-    //@extend .other_text
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  //@extend .other_text
+  font-family: 'WebsiteFont','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .lang_english{
-    //@extend .other_text
-    font-family: 'JetBrains';
+  //@extend .other_text
+  font-family: 'WebsiteFont';
 }
 .h1{
-    color: aqua;
+  color: aqua;
 }
 .h2{
-    font-size: 2.8rem;
+  font-size: 2.8rem;
 }
 .h3{
-    font-size: 2.6rem;
+  font-size: 2.6rem;
 }
 .h4,.h5,.h6{
-    font-size: 2.4rem;
+  font-size: 2.4rem;
 }
 .respect{
-    font-family: "KaiTi", "SimKai", serif;
-    font-size: 2.6rem;
-    font-weight: 900;
-}
-details{
-  summary{
-    color: darkgreen;
-  }
-  color: #2a9782;
+  font-family: "KaiTi", "SimKai", serif;
+  font-size: 2.6rem;
+  font-weight: 900;
 }

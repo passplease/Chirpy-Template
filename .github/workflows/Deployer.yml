@@ -1,98 +1,173 @@
-name: "Deploy Website"
-description: "Checkout, Build and Deploy My Website"
-inputs:
-  base_path:
-    description: "steps.pages.outputs.base_path"
-    required: true
-  repository:
-    description: "Repository which Needed to Deploy (Include '/' )"
-    required: false
-    default: ""
-  user_name:
-    description: "User Name"
-    required: false
-    default: "passplease"
-  send_email:
-    description: "Enable email notification"
-    required: false
-    default: "false"
-  ruby_version:
-    description: "Ruby version to use"
-    required: false
-    default: "3.3"
-  email_username:
-    required: false
-    default: ""
-  email_password:
-    required: false
-    default: ""
-  email_recipient:
-    required: false
-    default: ""
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: "Repository which Needed to Deploy (Include '/' )"
+        required: false
+        default: ""
+        type: string
+      ref:
+        description: "Branch which should be built"
+        required: false
+        default: 'master'
+        type: string
+      user_name:
+        description: "User Name"
+        required: false
+        default: "passplease"
+        type: string
+      ruby_version:
+        description: "Ruby version to use"
+        required: false
+        default: "3.3"
+        type: string
+      send_email:
+        description: "Enable email notification"
+        required: true
+        default: "false"
+        type: string
+    secrets:
+      email_username:
+        required: false
+      email_password:
+        required: false
+      email_recipient:
+        required: false
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-runs:
-  using: "composite"
-  steps:
-    - name: Checkout Template
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.user_name }}/Chirpy-Template
-        fetch-depth: 0
-        # submodules: true
-        # If using the 'assets' git submodule from Chirpy Starter, uncomment above
-        # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
-        path: ${{ github.workspace }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Template
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.user_name }}/Chirpy-Template
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          # submodules: true
+          # If using the 'assets' git submodule from Chirpy Starter, uncomment above
+          # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
 
-    - name: Checkout Post
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.user_name }}${{ inputs.repository }}
-        sparse-checkout: Chirpy
-        path: ${{ github.workspace }
-        fetch-depth: 0
+      - name: Checkout Post
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.user_name }}${{ inputs.repository }}
+          sparse-checkout: Chirpy
+          path: _temp
+          fetch-depth: 0
 
-#    - name: Flatten to root
-#      run: |
-#        rsync -a _temp/ ./  # 将内容移动到根目录
-#        rm -rf _temp        # 删除临时目录
+      - name: Flatten to root
+        run: |
+          rsync -a _temp/ ./  # 将内容移动到根目录
+          rm -rf _temp        # 删除临时目录
+          rsync -a Chirpy/assets/img/ ./assets/ # 从img中取出文件
+          rm -rf Chirpy/assets/img # 删除img
+          rsync -a Chirpy/ ./  # 从Chirpy中取出文件
+          rm -rf Chirpy        # 删除Chirpy
+          mkdir -p _sass/fonts
+          rm -f _sass/fonts/_index.scss
+          touch _sass/fonts/_index.scss
+          cat << EOF > _sass/fonts/_index.scss
+          @font-face {
+            font-family: 'WebsiteFont'; /* 定义字体的名称，你可以在 CSS 中使用这个名称来引用该字体 */
+            src:
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-Italic.woff2') format('woff2'), /* 字体文件的路径和格式 */
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-Italic.ttf') format('truetype'); /* 可以提供多种格式的字体文件，浏览器会选择它支持的格式 */
+            unicode-range:
+              U+0000-00FF, /* 基本ASCII/Latin字符 */
+              U+0100-017F, /* Latin扩展字符 */
+              U+0130,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,
+              U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; /* 其他常见符号 */
+            font-weight: normal; /* 字体的粗细 */
+            font-style: italic; /* 字体的样式 */
+            font-display: swap; /* 字体加载策略 */
+          }
+          @font-face {
+            font-family: 'WebsiteFont';
+            src:
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-ExtraBold.woff2') format('woff2'),
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-ExtraBold.ttf') format('truetype');
+            unicode-range:
+              U+0000-00FF,
+              U+0100-017F,
+              U+0130,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,
+              U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'WebsiteFont';
+            src:
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2'),
+              url('${{ inputs.repository }}/assets/fonts/JetBrainsMono-Regular.ttf') format('truetype');
+            unicode-range:
+              U+0000-00FF,
+              U+0100-017F,
+              U+0130,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,
+              U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'WebsiteFont';
+            src:
+              url('${{ inputs.repository }}/assets/fonts/华文行楷.ttf') format('truetype');
+            unicode-range:
+              U+4E00-9FFF, /* 基本CJK统一汉字 */
+              U+3400-4DBF, /* CJK扩展A */
+              U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, /* CJK扩展B-F */
+              U+3300-33FF, U+FE30-FE4F, U+F900-FAFF, U+FF00-FFEF; /* 中文相关符号 */
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+          }
+          EOF
 
-    - name: Setup Pages
-      id: pages
-      uses: actions/configure-pages@v4
+      - name: After File Structrue Changed
+        run: find . -type f
 
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ inputs.ruby_version }}
-        bundler-cache: true
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
 
-    - name: Install Dependencies
-      run: |
-        gem install bundler
-        bundle install
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          bundler-cache: true
 
-    - name: npm build
-      run: npm install && npm run build
+      - name: Install Dependencies
+        run: |
+          gem install bundler
+          bundle install
 
-    - name: Build site
-      run: bundle exec jekyll b -d "_site${{ inputs.base_path }}"
-      env:
-        JEKYLL_ENV: "production"
+      - name: npm build
+        run: npm install && npm run build
 
-    - name: Upload site artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: "jekyll-theme-chirpy-master/_site${{ inputs.base_path }}"
+      - name: Build site
+        run: bundle exec jekyll b -d "_site${{ inputs.repository }}"
+        env:
+          JEKYLL_ENV: "production"
+
+      - name: After Build
+        run: find . -type f
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site${{ inputs.repository }}"
 
   deploy:
     environment:
-      name: github-pages
-      url: "https://github.${{ inputs.user_name }}.io${{ inputs.repository }}"
+      url: "https://${{ inputs.user_name }}.github.io${{ inputs.repository }}"
+      name: Deploy
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -103,21 +178,15 @@ runs:
         if: ${{ inputs.send_email == 'true' }}
         uses: dawidd6/action-send-mail@v4
         with:
-    # Required mail server address if not connection_url:
+          # Required mail server address if not connection_url:
           server_address: smtp.gmail.com
-    # Server port, default 25:
+          # Server port, default 25:
           server_port: 465
-    # Optional whether this connection use TLS (default is true if server_port is 465)
+          # Optional whether this connection use TLS (default is true if server_port is 465)
           secure: true
-    # Optional (recommended) mail server username:
-          username: ${{ inputs.email_username }}
-    # Optional (recommended) mail server password:
-          password: ${{ inputs.email_password }}
-    # Required mail subject:
+          # Optional (recommended) mail server username:
+          username: ${{ secrets.email_username }}
+          # Optional (recommended) mail server password:
+          password: ${{ secrets.email_password }}
+          # Required mail subject:
           subject: 新博客上传啦
-    # Required recipients' addresses:
-          bcc: ${{ inputs.email_recipient }}
-    # Required sender full name (address can be skipped):
-          from: Luke Skywalker # <user@example.com>
-    # Optional plain body:
-          body: 网站博客更新新内容啦，邀你来看哦，网址："https://github.${{ inputs.user_name }}.io${{ inputs.repository }}"
