@@ -5,7 +5,7 @@
 @forward "fonts";
 
 body{
-  font-family: 'WebsiteFont', serif; /* 华文行楷，备选字体 Xingkai SC */
+  font-family: 'WebsiteFont',"KaiTi", serif;
   font-size: medium;
 }
 .page-title{
@@ -36,7 +36,7 @@ p{
 }
 .lang_english{
   //@extend .other_text
-  font-family: 'WebsiteFont';
+  font-family: 'WebsiteFont', serif;
 }
 .h1{
   color: aqua;

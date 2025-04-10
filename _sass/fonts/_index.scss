@@ -1,9 +1,8 @@
-$url: '/Marxism-Study-Material';
 @font-face {
   font-family: 'WebsiteFont'; /* 定义字体的名称，你可以在 CSS 中使用这个名称来引用该字体 */
   src:
-    url('$url/assets/fonts/JetBrainsMono-Italic.woff2') format('woff2'), /* 字体文件的路径和格式 */
-    url('$url/assets/fonts/JetBrainsMono-Italic.ttf') format('truetype'); /* 可以提供多种格式的字体文件，浏览器会选择它支持的格式 */
+    url('../fonts/JetBrainsMono-Italic.woff2') format('woff2'), /* 字体文件的路径和格式 */
+    url('../fonts/JetBrainsMono-Italic.ttf') format('truetype'); /* 可以提供多种格式的字体文件，浏览器会选择它支持的格式 */
   unicode-range:
     U+0000-00FF, /* 基本ASCII/Latin字符 */
     U+0100-017F, /* Latin扩展字符 */
@@ -16,8 +15,8 @@ $url: '/Marxism-Study-Material';
 @font-face {
   font-family: 'WebsiteFont';
   src:
-    url('$url/assets/fonts/JetBrainsMono-ExtraBold.woff2') format('woff2'),
-    url('$url/assets/fonts/JetBrainsMono-ExtraBold.ttf') format('truetype');
+    url('../fonts/JetBrainsMono-ExtraBold.woff2') format('woff2'),
+    url('../fonts/JetBrainsMono-ExtraBold.ttf') format('truetype');
   unicode-range:
     U+0000-00FF,
     U+0100-017F,
@@ -30,8 +29,8 @@ $url: '/Marxism-Study-Material';
 @font-face {
   font-family: 'WebsiteFont';
   src:
-    url('$url/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2'),
-    url('$url/assets/fonts/JetBrainsMono-Regular.ttf') format('truetype');
+    url('../fonts/JetBrainsMono-Regular.woff2') format('woff2'),
+    url('../fonts/JetBrainsMono-Regular.ttf') format('truetype');
   unicode-range:
     U+0000-00FF,
     U+0100-017F,
@@ -44,10 +43,22 @@ $url: '/Marxism-Study-Material';
 @font-face {
   font-family: 'WebsiteFont';
   src:
-    url('$url/assets/fonts/华文行楷.ttf') format('truetype');
+    url('../fonts/华文行楷.ttf') format('truetype');
   unicode-range:
     U+4E00-9FFF, /* 基本CJK统一汉字 */
     U+3400-4DBF, /* CJK扩展A */
     U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, /* CJK扩展B-F */
     U+3300-33FF, U+FE30-FE4F, U+F900-FAFF, U+FF00-FFEF; /* 中文相关符号 */
+  font-style: normal;
+}
+@font-face {
+  font-family: 'WebsiteFont';
+  src:
+    url('../fonts/楷体-粗体.ttf') format('truetype');
+  unicode-range:
+    U+4E00-9FFF, /* 基本CJK统一汉字 */
+    U+3400-4DBF, /* CJK扩展A */
+    U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, /* CJK扩展B-F */
+    U+3300-33FF, U+FE30-FE4F, U+F900-FAFF, U+FF00-FFEF; /* 中文相关符号 */
+  font-weight: bold;
 }
